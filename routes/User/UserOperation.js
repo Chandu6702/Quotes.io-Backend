@@ -7,7 +7,7 @@ async function userSignup(email,password){
         await User.insertMany({email:email,password:hash});
         return {status:true};
     }catch(error){
-        return {status:false,error:error.message};
+        return {status:false,error:"Email already in use"};
     }
 }
 
