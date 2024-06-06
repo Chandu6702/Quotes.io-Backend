@@ -1,25 +1,21 @@
 import express from "express";
 import cors from 'cors';
-import UseRouter from "./routes/User.routes.js";
 import cookieParser from 'cookie-parser'
-import { verifyJWT } from "./middleware/authorization.js";
+
+import UseRouter from "./routes/User.routes.js";
+import QuoteRouter from "./routes/Quote.routes.js"
 
 
 const app = express()
 
-app.use(cors());
-app.use(express.json())
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    credentials: true
+}));
 app.use(cookieParser())
+app.use(express.json())
 
 app.use(UseRouter)
-
-app.post("/secret", (req, res) => {
-    res.cookie("test", "leo", {
-        httpOnly: true
-    })
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173")
-    console.log(req.cookies);
-    res.send("ok")
-})
+app.use(QuoteRouter)
 
 export default app

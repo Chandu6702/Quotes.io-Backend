@@ -1,6 +1,6 @@
-import User from "../schema/UserSchema.js";
+import User from "../schema/User.schema.js";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { signJWT } from "../utils/generateJWT.utils.js"
 
 async function userSignup(req, res) {
   try {
@@ -30,13 +30,9 @@ async function userLogin(req, res) {
     if (!bcrypt.compareSync(password, user.password))
       return res.send(JSON.stringify({ status: false, error: "Incorrect Password" }));
 
-    const ACCESS_TOKEN = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "1m"
-    })
+    const ACCESS_TOKEN = signJWT(email);
 
-    res.cookie("jwt", ACCESS_TOKEN, {
-      httpOnly: true
-    })
+    res.cookie("ACCESS_TOKEN", ACCESS_TOKEN, { httpOnly: true, sameSite: 'None', secure: true })
 
     return res.status(200).send(JSON.stringify({ status: true }));
 
