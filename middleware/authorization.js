@@ -1,18 +1,60 @@
 import jwt from "jsonwebtoken";
+import Session from './../schema/Session.schema.js';
+import { signJWT } from "../utils/generateJWT.utils.js";
 
 async function verifyJWT(req, res, next) {
     try {
-        const token = req.cookies?.ACCESS_TOKEN
-        console.log(req.cookies);
-        console.log(token);
-        const decode = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        console.log(decode);
-        if (!decode)
-            res.send("not authorized")
-        next()
+        const ACCESS_TOKEN = req.cookies.ACCESS_TOKEN;
+        const REFRESH_TOKEN = req.cookies.REFRESH_TOKEN;
+
+        console.log("Access Token:", ACCESS_TOKEN, "\n", "Refresh Token:", REFRESH_TOKEN);
+
+        const decodedAccessToken = jwt.verify(ACCESS_TOKEN, process.env.ACCESS_TOKEN_SECRET);
+
+        console.log("Decoded Access Token:", decodedAccessToken);
+
+        if (!decodedAccessToken) {
+            return res.status(401).send("Not authorized");
+        }
+        req.user = decodedAccessToken.user
+        next();
     } catch (error) {
-        console.log(error.message);
-        res.send("not authorized")
+        console.log("Access token verification failed:", error.message);
+
+        try {
+            const REFRESH_TOKEN = req.cookies.REFRESH_TOKEN;
+            const decodedRefreshToken = jwt.verify(REFRESH_TOKEN, process.env.REFRESH_TOKEN_SECRET);
+
+            const current_session = await Session.findOne({ refreshToken: REFRESH_TOKEN });
+
+            if (!current_session) {
+                throw new Error("Session not found");
+            }
+
+            if (current_session.user !== decodedRefreshToken.user) {
+                throw new Error("User mismatch");
+            }
+
+            console.log("Current session:", current_session);
+
+            const newAccessToken = signJWT(current_session.user);
+
+            res.cookie("ACCESS_TOKEN", newAccessToken, { httpOnly: true, sameSite: 'None', secure: true });
+
+            req.user = decodedRefreshToken.user
+
+            next();
+        } catch (refreshError) {
+            console.log("Refresh token verification failed:", refreshError.message);
+
+            const REFRESH_TOKEN = req.cookies.REFRESH_TOKEN;
+            await Session.deleteOne({ refreshToken: REFRESH_TOKEN });
+
+            res.cookie("ACCESS_TOKEN", " ", { httpOnly: true, sameSite: 'None', secure: true });
+            res.cookie("REFRESH_TOKEN", " ", { httpOnly: true, sameSite: 'None', secure: true });
+
+            return res.status(401).send("Session expired");
+        }
     }
 }
 

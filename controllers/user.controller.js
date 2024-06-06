@@ -1,6 +1,7 @@
 import User from "../schema/User.schema.js";
 import bcrypt from "bcrypt";
-import { signJWT } from "../utils/generateJWT.utils.js"
+import { signJWT, signJWTRefresh } from "../utils/generateJWT.utils.js"
+import Session from './../schema/Session.schema.js';
 
 async function userSignup(req, res) {
   try {
@@ -31,8 +32,12 @@ async function userLogin(req, res) {
       return res.send(JSON.stringify({ status: false, error: "Incorrect Password" }));
 
     const ACCESS_TOKEN = signJWT(email);
+    const REFRESH_TOKEN = signJWTRefresh(email);
+
+    await Session.insertMany({ user: email, refreshToken: REFRESH_TOKEN });
 
     res.cookie("ACCESS_TOKEN", ACCESS_TOKEN, { httpOnly: true, sameSite: 'None', secure: true })
+    res.cookie("REFRESH_TOKEN", REFRESH_TOKEN, { httpOnly: true, sameSite: 'None', secure: true })
 
     return res.status(200).send(JSON.stringify({ status: true }));
 
@@ -41,4 +46,23 @@ async function userLogin(req, res) {
   }
 }
 
-export { userLogin, userSignup };
+async function userLogout(req, res) {
+  try {
+    console.log(req.body);
+
+    const user = req.user
+
+    await Session.deleteOne({ user: user });
+
+    console.log("log out");
+
+    res.cookie("ACCESS_TOKEN", " ", { httpOnly: true, sameSite: 'None', secure: true });
+    res.cookie("REFRESH_TOKEN", " ", { httpOnly: true, sameSite: 'None', secure: true });
+
+    res.status(200).send({ status: true })
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+export { userLogin, userSignup, userLogout };
