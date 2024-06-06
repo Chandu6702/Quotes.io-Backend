@@ -9,7 +9,7 @@ import QuoteRouter from "./routes/Quote.routes.js"
 const app = express()
 
 app.use(cors({
-    origin: ["http://localhost:5173"],
+    origin: ["https://quotes-io.onrender.com"],
     credentials: true
 }));
 app.use(cookieParser())
