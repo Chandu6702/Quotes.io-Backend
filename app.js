@@ -11,6 +11,8 @@ import QuoteRouter from "./routes/Quote.routes.js"
 
 const app = express()
 
+console.log(`${process.env.isDEV == 'true' ? process.env.DEV_FRONTEND_ORIGIN : process.env.DEP_FRONTEND_ORIGIN}`);
+
 app.use(cors({
     origin: [`${process.env.isDEV == 'true' ? process.env.DEV_FRONTEND_ORIGIN : process.env.DEP_FRONTEND_ORIGIN}`],
     credentials: true
