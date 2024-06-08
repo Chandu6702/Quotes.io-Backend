@@ -1,8 +1,8 @@
-import mongoose, { Schema, model } from "mongoose";
+import mongoose from "mongoose";
 
-const schema = new Schema({
+const schema = mongoose.Schema({
     author: {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: true
     },
@@ -15,12 +15,13 @@ const schema = new Schema({
         default: [],
         required: true
     },
-    likes: {
-        type: Number,
-        default: 0
+    liked_by: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "User",
+        default: []
     }
 }, { timestamps: true })
 
-const Quote = new model("Quotes", schema)
+const Quote = mongoose.model("Quote", schema)
 
 export default Quote

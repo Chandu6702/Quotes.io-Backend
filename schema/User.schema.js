@@ -1,6 +1,6 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose from 'mongoose'
 
-const schema = new mongoose.Schema({
+const schema = mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -13,13 +13,13 @@ const schema = new mongoose.Schema({
     },
 
     liked_quotes: {
-        type: [Schema.Types.ObjectId],
+        type: [mongoose.Schema.Types.ObjectId],
         ref: "Quote",
         default: []
     }
 
 }, { timestamps: true })
 
-const User = new mongoose.model('Users', schema)
+const User = mongoose.model('User', schema)
 
 export default User

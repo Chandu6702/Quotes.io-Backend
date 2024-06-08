@@ -19,6 +19,6 @@ app.use(cookieParser())
 app.use(express.json())
 
 app.use(UseRouter)
-app.use(QuoteRouter)
+app.use("/quote", QuoteRouter)
 
 export default app

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const schema = new mongoose.Schema({
+const schema = mongoose.Schema({
     user: {
         type: String,
         required: true,
@@ -13,6 +13,6 @@ const schema = new mongoose.Schema({
     }
 }, { timestamps: true })
 
-const Session = new mongoose.model("Sessions", schema);
+const Session = mongoose.model("Session", schema);
 
 export default Session;
