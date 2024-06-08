@@ -48,13 +48,9 @@ async function userLogin(req, res) {
 
 async function userLogout(req, res) {
   try {
-    console.log(req.body);
-
     const user = req.user
 
     await Session.deleteOne({ user: user });
-
-    console.log("log out");
 
     res.cookie("ACCESS_TOKEN", " ", { httpOnly: true, sameSite: 'None', secure: true });
     res.cookie("REFRESH_TOKEN", " ", { httpOnly: true, sameSite: 'None', secure: true });

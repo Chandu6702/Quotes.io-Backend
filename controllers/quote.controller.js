@@ -48,8 +48,6 @@ export async function getMyQuotes(req, res) {
             return { _id: item._id, author: item.author, quote: item.quote, liked_by: item.liked_by, isLiked: item.liked_by.some((user) => user._id.equals(author._id)) };
         })
 
-        console.log(response);
-
         res.status(200).send(response);
     } catch (error) {
         console.log(error.message);
