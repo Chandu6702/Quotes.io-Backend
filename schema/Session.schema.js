@@ -3,15 +3,15 @@ import mongoose from "mongoose";
 const schema = new mongoose.Schema({
     user: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     },
     refreshToken: {
         type: String,
-        require: true,
+        required: true,
         unique: true
     }
-})
+}, { timestamps: true })
 
 const Session = new mongoose.model("Sessions", schema);
 

@@ -1,8 +1,6 @@
 import app from './app.js'
 import dbConnect from './database/dbConnect.js'
-import dotenv from "dotenv"
 
-dotenv.config()
 
 
 dbConnect().then(() => {

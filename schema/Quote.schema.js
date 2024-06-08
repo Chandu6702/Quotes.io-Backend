@@ -1,22 +1,26 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-const schema = new mongoose.Schema({
+const schema = new Schema({
     author: {
         type: Schema.Types.ObjectId,
         ref: "User",
-        require: true
+        required: true
     },
     quote: {
         type: String,
-        require: true,
+        required: true,
     },
-    generes: {
+    genres: {
         type: [String],
-        default: [""],
-        require: true
+        default: [],
+        required: true
+    },
+    likes: {
+        type: Number,
+        default: 0
     }
-})
+}, { timestamps: true })
 
-const Quote = new mongoose.model("Quotes", schema)
+const Quote = new model("Quotes", schema)
 
 export default Quote

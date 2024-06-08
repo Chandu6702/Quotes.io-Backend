@@ -1,6 +1,9 @@
 import express from "express";
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
+import dotenv from "dotenv"
+
+dotenv.config()
 
 import UseRouter from "./routes/User.routes.js";
 import QuoteRouter from "./routes/Quote.routes.js"
@@ -9,7 +12,7 @@ import QuoteRouter from "./routes/Quote.routes.js"
 const app = express()
 
 app.use(cors({
-    origin: ["https://quotes-io.onrender.com"],
+    origin: [`${process.env.FRONTEND_ORIGIN}`],
     credentials: true
 }));
 app.use(cookieParser())
