@@ -12,7 +12,7 @@ import QuoteRouter from "./routes/Quote.routes.js"
 const app = express()
 
 app.use(cors({
-    origin: [`${process.env.FRONTEND_ORIGIN}`],
+    origin: [`${process.env.isDEV == 'true' ? process.env.DEV_FRONTEND_ORIGIN : process.env.DEP_FRONTEND_ORIGIN}`],
     credentials: true
 }));
 app.use(cookieParser())
