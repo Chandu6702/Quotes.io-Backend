@@ -34,10 +34,10 @@ async function userLogin(req, res) {
     const ACCESS_TOKEN = signJWT(email);
     const REFRESH_TOKEN = signJWTRefresh(email);
 
-    await Session.insertMany({ user: email, refreshToken: REFRESH_TOKEN });
+    res.cookie("ACCESS_TOKEN", ACCESS_TOKEN, { httpOnly: true, sameSite: 'None', secure: true, expires: new Date(Date.now() + 86400 * 1000) })
+    res.cookie("REFRESH_TOKEN", REFRESH_TOKEN, { httpOnly: true, sameSite: 'None', secure: true, expires: new Date(Date.now() + 15 * 86400 * 1000) })
 
-    res.cookie("ACCESS_TOKEN", ACCESS_TOKEN, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 1 * 30 * 24 * 60 * 60 * 1000 })
-    res.cookie("REFRESH_TOKEN", REFRESH_TOKEN, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 1 * 30 * 24 * 60 * 60 * 1000 })
+    await Session.insertMany({ user: email, refreshToken: REFRESH_TOKEN });
 
     return res.status(200).send(JSON.stringify({ status: true }));
 
