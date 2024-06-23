@@ -28,6 +28,8 @@ async function userLogin(req, res) {
     if (user == null)
       return res.send(JSON.stringify({ status: false, error: "User not Found" }));
 
+    await Session.findOneAndDelete({ user: email })
+
     if (!bcrypt.compareSync(password, user.password))
       return res.send(JSON.stringify({ status: false, error: "Incorrect Password" }));
 
