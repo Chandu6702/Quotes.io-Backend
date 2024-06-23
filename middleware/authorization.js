@@ -13,9 +13,15 @@ async function verifyJWT(req, res, next) {
 
         console.log("Decoded Access Token:", decodedAccessToken);
 
-        if (!decodedAccessToken) {
+        if (decodedAccessToken == null) {
             return res.status(401).send("Not authorized");
         }
+
+        const session = await Session.findOne({ user: decodedAccessToken.user, refreshToken: REFRESH_TOKEN });
+
+        if (session == null)
+            throw new Error("User mismatch");
+
         req.user = decodedAccessToken.user
         next();
     } catch (error) {
